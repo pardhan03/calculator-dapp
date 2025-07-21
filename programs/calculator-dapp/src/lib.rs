@@ -6,25 +6,37 @@ declare_id!("AohSsWK9gVxfgsFe8AuPcidZdwXbwjSmMgsXsmZB58SJ");
 pub mod calculator_dapp {
     use super::*;
 
-    // init_message is greeting message for our calculare
-    // Solana program are stateless which means they can't store the data
-    // we have to create a account to store the date (account is like a file)
-    // then we put the account ont the Solana Blockchain
-    pub fn create(ctx: Context<Create>, init_message:String) -> Result<()> {
-        let calcultor = ctx.accounts.calcultor;
-        calcultor.greeting = init_message;
-        // And finally, we use OK. So let's so long to know that the function was run successfully.
-        ok(())
+    // Initializes a calculator account with a greeting message
+    pub fn create(ctx: Context<Create>, init_message: String) -> Result<()> {
+        let calculator = &mut ctx.accounts.calculator;
+        calculator.greeting = init_message;
+        Ok(())
+    }
+
+    // function to add two number
+    pub fn add(ctx: Context<Addition>, num1:i64, num2:i64) -> Result<()> {
+        let calculator = &mut ctx.accounts.calculator;
+        calculator.result = num1 + num2;
+        Ok(())
     }
 }
 
 #[derive(Accounts)]
-pub struct create<'info> {
+pub struct Create<'info> {
     #[account(init, payer = user, space = 8 + 4 + 64 + 8 + 8)]
-    pub calcultor = Account<'info, Calcultor>,
+    pub calculator: Account<'info, Calculator>,
+
     #[account(mut)]
     pub user: Signer<'info>,
-    pub system_program: Program<'info Sytem>
+
+    pub system_program: Program<'info, System>,
+}
+
+// in this context we don't need to pass init because we are not creating a new account. Instead we are just using an account.
+#[derive(Accounts)]
+pub struct Addition<'info> {
+    #[account(mut)] // we are passing a mut here because we will modify a account.
+    pub calculator: Account<'info, Calculator>,
 }
 
 #[account]

@@ -23,5 +23,15 @@ describe('calculator_dapp', () => {
 
     const account = await program.account.calculator.fetch(calculator.publicKey);
     assert.strictEqual(account.greeting, "Welcome to Solana");
-  });
-});
+  })
+
+  it('Add two numbers', async () => {
+    await program.rpc.add(new anchor.BN(2), new anchor.BN(2), {
+      accounts: {
+        calculator: calculator.publicKey,
+      }
+    })
+    const account = await program.account.calculator.fetch(calculator.publicKey);
+    assert.ok(account.result.eq(new anchor.BN(4)))
+  })
+})
