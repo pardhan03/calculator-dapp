@@ -34,4 +34,35 @@ describe('calculator_dapp', () => {
     const account = await program.account.calculator.fetch(calculator.publicKey);
     assert.ok(account.result.eq(new anchor.BN(4)))
   })
+
+  it('Subtracts two numbers', async () => {
+    await program.rpc.add(new anchor.BN(10), new anchor.BN(5), {
+      accounts: {
+        calculator: calculator.publicKey,
+      }
+    })
+    const account = await program.account.calculator.fetch(calculator.publicKey);
+    assert.ok(account.result.eq(new anchor.BN(5)))
+  })
+
+  it('Multiplies two numbers', async () => {
+    await program.rpc.add(new anchor.BN(2), new anchor.BN(2), {
+      accounts: {
+        calculator: calculator.publicKey,
+      }
+    })
+    const account = await program.account.calculator.fetch(calculator.publicKey);
+    assert.ok(account.result.eq(new anchor.BN(4)))
+  })
+
+  it('Divide two numbers', async () => {
+    await program.rpc.add(new anchor.BN(4), new anchor.BN(2), {
+      accounts: {
+        calculator: calculator.publicKey,
+      }
+    })
+    const account = await program.account.calculator.fetch(calculator.publicKey);
+    assert.ok(account.result.eq(new anchor.BN(2)))
+    assert.ok(account.remainder.eq(new anchor.BN(0)))
+  })
 })
